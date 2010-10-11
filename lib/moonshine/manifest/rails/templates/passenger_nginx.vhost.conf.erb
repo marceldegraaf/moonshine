@@ -1,0 +1,19 @@
+# This file was borrowed from http://github.com/benhoskings/babushka-deps
+
+server {
+  listen 80;
+  include vhosts/<%= configuration[:application] %>.common;
+}
+
+<% if configuration[:ssl] %>
+server {
+  listen 443;
+
+  ssl                  on;
+  ssl_certificate      <%= configuration[:deploy_to] %>/shared/certs/ssl.crt;
+  ssl_certificate_key  <%= configuration[:deploy_to] %>/shared/certs/ssl.key;
+  ssl_session_timeout  <%= configuration[:ssl][:session_timeout] || '5m' %>;
+
+  include vhosts/<%= configuration[:application] %>.common;
+}
+<% end %>

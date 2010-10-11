@@ -1,0 +1,27 @@
+# This file was borrowed from http://github.com/benhoskings/babushka-deps
+
+server_name <%= configuration[:domain] %> <%= configuration[:domain_aliases].to_a.join(' ') if configuration[:domain_aliases] %>;
+root <%= configuration[:deploy_to] + '/current/public' %>;
+passenger_enabled on;
+<% if configuration[:passenger][:base_uri] %>
+passenger_base_uri <% configuration[:passenger][:base_uri] %>;
+<% end %>
+passenger_use_global_queue <%= nginx_boolean(configuration[:passenger][:user_global_queue]) %>;
+<%= passenger_3? ? 'passenger' : 'rails' %>_spawn_method <%= configuration[:passenger][:spawn_method] || 'smart-lv2' %>;
+
+rails_env <%= configuration[:passenger][:rails_env] || ENV['RAILS_ENV'] || 'production' %>;
+
+if (-f $document_root/system/maintenance.html) {
+  rewrite ^(.*)$ /system/maintenance.html break;
+}
+
+location ~* \.(js|css|jpe?g|png|gif|ico|swf)$ {
+  if ($request_uri ~ "\?[0-9]+$") {
+    expires max; # cache timestamped assets forever...
+    break;
+  }
+  if ($request_uri !~ "\?[0-9]+$") {
+    expires 1d; # ...and others for 1 day
+    break;
+  }
+}

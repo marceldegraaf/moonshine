@@ -43,7 +43,22 @@ class Moonshine::Manifest::Rails < Moonshine::Manifest
   # default_stack installs the database based on the adapter in database.yml for the rails environment
   def default_stack
     recipe :apache_server
-    recipe :passenger_gem, :passenger_configure_gem_path, :passenger_apache_module, :passenger_site
+    recipe :passenger_gem, :passenger_configure_gem_path, :passenger_apache_module, :passenger_apache_site
+    db_server
+    rails_environment
+    utilities
+  end
+  alias :apache_stack :default_stack
+
+  # default_stack with Nginx instead of Apache
+  def nginx_stack
+    recipe :passenger_gem, :passenger_configure_gem_path, :passenger_nginx, :passenger_nginx_site
+    db_server
+    rails_environment
+    utilities
+  end
+
+  def db_server
     case database_environment[:adapter]
     when 'mysql'
       recipe :mysql_server, :mysql_gem, :mysql_database, :mysql_user, :mysql_fixup_debian_start
@@ -52,7 +67,13 @@ class Moonshine::Manifest::Rails < Moonshine::Manifest
     when 'sqlite' || 'sqlite3'
       self.class.recipe :sqlite3
     end
+  end
+
+  def rails_environment
     recipe :rails_rake_environment, :rails_gems, :rails_directories, :rails_bootstrap, :rails_migrations, :rails_logrotate
+  end
+
+  def utilities
     recipe :ntp, :time_zone, :postfix, :cron_packages, :motd, :security_updates
   end
 

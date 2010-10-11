@@ -56,7 +56,7 @@
   # The default is on.
   # Options: <on|off>
 
-  RailsAutoDetect <%= passenger_config_boolean(configuration[:passenger][:rails_auto_detect]) %>
+  RailsAutoDetect <%= apache_boolean(configuration[:passenger][:rails_auto_detect]) %>
 
   ## RailsBaseURI
   #
@@ -76,7 +76,7 @@
   # of Passenger.
   # Options: <on|off>
 
-  RailsAllowModRewrite <%= passenger_config_boolean(configuration[:passenger][:allow_mod_rewrite]) %>
+  RailsAllowModRewrite <%= apache_boolean(configuration[:passenger][:allow_mod_rewrite]) %>
 
   ## RackEnv
   #
@@ -218,7 +218,7 @@
   # The default is on.
   # Options: <on|off>
 
-  RailsAutoDetect <%= passenger_config_boolean(configuration[:passenger][:rails_auto_detect]) %>
+  RailsAutoDetect <%= apache_boolean(configuration[:passenger][:rails_auto_detect]) %>
 
   ## RailsBaseURI
   #
@@ -238,7 +238,7 @@
   # of Passenger.
   # Options: <on|off>
 
-  RailsAllowModRewrite <%= passenger_config_boolean(configuration[:passenger][:allow_mod_rewrite]) %>
+  RailsAllowModRewrite <%= apache_boolean(configuration[:passenger][:allow_mod_rewrite]) %>
 
   ## RailsEnv
   #

@@ -12,7 +12,7 @@ describe Moonshine::Manifest do
   end
 
   def application_template
-    @application_template ||= @manifest.rails_root.join('app', 'manifests', 'templates', 'passenger.conf.erb')
+    @application_template ||= @manifest.rails_root.join('app', 'manifests', 'templates', 'passenger_apache.conf.erb')
   end
 
   it 'should load configuration' do
@@ -29,7 +29,7 @@ describe Moonshine::Manifest do
       @manifest = Moonshine::Manifest::Rails.new
       @manifest.configure(:application => 'bar')
 
-      moonshine_template = Pathname.new(__FILE__).dirname.join('..', '..', 'lib', 'moonshine', 'manifest', 'rails', 'templates', 'passenger.vhost.erb')
+      moonshine_template = Pathname.new(__FILE__).dirname.join('..', '..', 'lib', 'moonshine', 'manifest', 'rails', 'templates', 'passenger_apache.vhost.erb')
       template_contents = 'moonshine template: <%= configuration[:application] %>'
       @manifest.stub!(:local_template).and_return(application_template)
 
@@ -44,8 +44,8 @@ describe Moonshine::Manifest do
       FileUtils.mkdir_p application_template.dirname
       application_template.open('w') {|f| f.write "application template: <%= configuration[:application] %>" }
 
-      moonshine_template = Pathname.new(__FILE__).dirname.join('..', '..', 'lib', 'moonshine', 'manifest', 'rails', 'templates', 'passenger.conf.erb')
-      application_template = @manifest.rails_root.join('app', 'manifests', 'templates', 'passenger.conf.erb')
+      moonshine_template = Pathname.new(__FILE__).dirname.join('..', '..', 'lib', 'moonshine', 'manifest', 'rails', 'templates', 'passenger_apache.conf.erb')
+      application_template = @manifest.rails_root.join('app', 'manifests', 'templates', 'passenger_apache.conf.erb')
       application_template.should exist
       moonshine_template.should exist
 

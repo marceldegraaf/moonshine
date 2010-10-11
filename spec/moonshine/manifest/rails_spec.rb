@@ -33,7 +33,7 @@ describe Moonshine::Manifest::Rails do
       @manifest.should use_recipe(:passenger_gem)
       @manifest.should use_recipe(:passenger_configure_gem_path)
       @manifest.should use_recipe(:passenger_apache_module)
-      @manifest.should use_recipe(:passenger_site)
+      @manifest.should use_recipe(:passenger_apache_site)
 
       @manifest.should use_recipe(:mysql_server)
       @manifest.should use_recipe(:mysql_gem)
@@ -181,10 +181,10 @@ describe Moonshine::Manifest::Rails do
     end
 
 
-    describe "passenger_site" do
+    describe "passenger_apache_site" do
       it "enables passenger vhost, disables default vhost, and configures mod_rewrite" do
         @manifest.passenger_configure_gem_path
-        @manifest.passenger_site
+        @manifest.passenger_apache_site
 
         vhost_conf_path = "/etc/apache2/sites-available/#{@manifest.configuration[:application]}"
         @manifest.should have_file(vhost_conf_path).with_content(
@@ -199,7 +199,7 @@ describe Moonshine::Manifest::Rails do
         @manifest.passenger_configure_gem_path
         @manifest.configure(:passenger => { :rails_base_uri => '/test' })
 
-        @manifest.passenger_site
+        @manifest.passenger_apache_site
 
         vhost_conf_path = "/etc/apache2/sites-available/#{@manifest.configuration[:application]}"
         @manifest.should have_file(vhost_conf_path).with_content(
@@ -214,7 +214,7 @@ describe Moonshine::Manifest::Rails do
           :gzip_types => ['text/css', 'application/javascript']
         })
 
-        @manifest.passenger_site
+        @manifest.passenger_apache_site
 
         @manifest.should have_file("/etc/apache2/sites-available/#{@manifest.configuration[:application]}").with_content(
           /AddOutputFilterByType DEFLATE text\/css application\/javascript/
@@ -230,7 +230,7 @@ describe Moonshine::Manifest::Rails do
           :protocol => 'all -SSLv2'
         })
 
-        @manifest.passenger_site
+        @manifest.passenger_apache_site
 
         @manifest.should have_file("/etc/apache2/sites-available/#{@manifest.configuration[:application]}").with_content(
           /SSLEngine on/
@@ -252,7 +252,7 @@ describe Moonshine::Manifest::Rails do
         }
         })
 
-        @manifest.passenger_site
+        @manifest.passenger_apache_site
 
         vhost_conf_path = "/etc/apache2/sites-available/#{@manifest.configuration[:application]}"
         @manifest.should have_file(vhost_conf_path).with_content(
@@ -276,7 +276,7 @@ describe Moonshine::Manifest::Rails do
           :allow => ['192.168.1','env=safari_user']
         })
 
-        @manifest.passenger_site
+        @manifest.passenger_apache_site
 
         vhost = @manifest.files["/etc/apache2/sites-available/#{@manifest.configuration[:application]}"].content
         vhost.should match(/<Location \/ >/)
@@ -292,7 +292,7 @@ describe Moonshine::Manifest::Rails do
           :deny => ['192.168.1','env=safari_user']
         })
 
-        @manifest.passenger_site
+        @manifest.passenger_apache_site
 
         vhost_conf_path = "/etc/apache2/sites-available/#{@manifest.configuration[:application]}"
         @manifest.should have_file(vhost_conf_path).with_content(
