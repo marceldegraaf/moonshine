@@ -329,7 +329,6 @@ module Moonshine
           task :install do
             install_deps
             send fetch(:ruby)
-            install_rubygems
             install_moonshine_deps
           end
 
@@ -339,6 +338,7 @@ module Moonshine
 
           task :apt do
             sudo 'apt-get install -q -y ruby-full'
+            install_rubygems
           end
 
           task :remove_ruby_from_apt do
@@ -363,11 +363,15 @@ module Moonshine
             run [
               'cd /tmp',
               'sudo rm -rf ruby-enterprise-1.8.7-2010.02* || true',
-              'sudo mkdir -p /usr/lib/ruby/gems/1.8/gems || true',
+              'sudo mkdir -p /opt/ruby/lib/ruby/gems/1.8/gems || true',
               'wget -q http://rubyforge.org/frs/download.php/71096/ruby-enterprise-1.8.7-2010.02.tar.gz',
               'tar xzf ruby-enterprise-1.8.7-2010.02.tar.gz',
-              'sudo /tmp/ruby-enterprise-1.8.7-2010.02/installer --dont-install-useful-gems --no-dev-docs -a /usr'
+              'sudo /tmp/ruby-enterprise-1.8.7-2010.02/installer --dont-install-useful-gems --no-dev-docs -a /opt/ruby',
+              "sudo sed -ri 's|\"/usr/local/sbin|\"/opt/ruby/bin:/usr/local/sbin|' /etc/environment",
+              # Allow ruby into the sudo PATH, poentially insecure as it also disables sudo's password requirement
+              "if ! sudo grep -q exempt_group=sudo /etc/sudoers; then echo 'Defaults exempt_group=sudo' | sudo tee -a /etc/sudoers; fi"
             ].join(' && ')
+            default_environment["PATH"] = "/opt/ruby/bin:$PATH"
           end
 
           task :src187 do
@@ -383,6 +387,7 @@ module Moonshine
               'make',
               'sudo make install'
             ].join(' && ')
+            install_rubygems
           end
 
           task :install_rubygems do
