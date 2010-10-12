@@ -24,6 +24,7 @@ module Moonshine::Manifest::Rails::Passenger
       :ensure => :present,
       :content => template(File.join(File.dirname(__FILE__), 'templates', 'nginx.conf.erb')),
       :require => [exec('build_passenger_nginx')],
+      :notify => [exec('nginx_reload')],
       :alias => 'nginx_conf'
 
     file '/etc/init.d/nginx',
@@ -31,7 +32,7 @@ module Moonshine::Manifest::Rails::Passenger
       :content => template(File.join(File.dirname(__FILE__), 'templates', 'nginx.init.erb')),
       :mode => 755,
       :require => [exec('build_passenger_nginx')],
-      :notify => [service('nginx')],
+      :notify => [exec('nginx_restart')],
       :alias => 'nginx_init'
 
     group 'www',
@@ -43,12 +44,17 @@ module Moonshine::Manifest::Rails::Passenger
       :shell => '/bin/false',
       :gid => 'www'
 
+    exec 'nginx_reload',
+      :command => '/etc/init.d/nginx reload',
+      :require => [exec('build_passenger_nginx'), file('nginx_init')]
+
+    exec 'nginx_restart',
+      :command => '/etc/init.d/nginx restart',
+      :require => [exec('build_passenger_nginx'), file('nginx_init')]
+
     service 'nginx',
       :require => [exec('build_passenger_nginx'), file('nginx_init')],
-      :enable => true,
-      :ensure => :running,
-      :hasstatus => true,
-      :hasrestart => true
+      :enable => true
   end
 
   def passenger_nginx_site
@@ -66,20 +72,20 @@ module Moonshine::Manifest::Rails::Passenger
       :ensure => :present,
       :content => template(File.join(File.dirname(__FILE__), 'templates', 'passenger_nginx.vhost.common.erb')),
       :require => [exec('build_passenger_nginx')],
-      :notify => [service('nginx')],
+      :notify => [exec('nginx_reload')],
       :alias => 'passenger_nginx_vhost_common'
 
     file "/opt/nginx/conf/vhosts/#{configuration[:application]}.conf",
       :ensure => :present,
       :content => template(File.join(File.dirname(__FILE__), 'templates', 'passenger_nginx.vhost.conf.erb')),
       :require => [exec('build_passenger_nginx'), file('passenger_nginx_vhost_directory')],
-      :notify => [service('nginx')],
+      :notify => [exec('nginx_reload')],
       :alias => 'passenger_nginx_vhost_conf'
 
     file "/opt/nginx/conf/vhosts/on/#{configuration[:application]}.conf",
       :ensure => "/opt/nginx/conf/vhosts/#{configuration[:application]}.conf",
       :require => [exec('build_passenger_nginx'), file('passenger_nginx_vhost_conf'), file('passenger_nginx_vhost_on')],
-      :notify => [service('nginx')],
+      :notify => [exec('nginx_reload')],
       :alias => 'passenger_nginx_vhost'
   end
 
