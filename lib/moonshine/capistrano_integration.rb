@@ -401,7 +401,7 @@ module Moonshine
 
           task :install_deps do
             aptget.update
-            sudo 'apt-get install -q -y build-essential zlib1g-dev libssl-dev libreadline5-dev wget'
+            sudo 'apt-get install -q -y build-essential zlib1g-dev libssl-dev libreadline5-dev wget lsb-release dialog'
           end
 
           task :install_moonshine_deps do
