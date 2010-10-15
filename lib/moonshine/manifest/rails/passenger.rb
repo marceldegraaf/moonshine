@@ -46,11 +46,13 @@ module Moonshine::Manifest::Rails::Passenger
 
     exec 'nginx_reload',
       :command => '/etc/init.d/nginx reload',
-      :require => [exec('build_passenger_nginx'), file('nginx_init')]
+      :require => [exec('build_passenger_nginx'), file('nginx_init')],
+      :refreshonly => true
 
     exec 'nginx_restart',
       :command => '/etc/init.d/nginx restart',
-      :require => [exec('build_passenger_nginx'), file('nginx_init')]
+      :require => [exec('build_passenger_nginx'), file('nginx_init')],
+      :refreshonly => true
 
     service 'nginx',
       :require => [exec('build_passenger_nginx'), file('nginx_init')],
