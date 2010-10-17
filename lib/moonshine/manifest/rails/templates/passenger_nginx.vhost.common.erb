@@ -15,13 +15,7 @@ if (-f $document_root/system/maintenance.html) {
   rewrite ^(.*)$ /system/maintenance.html break;
 }
 
-location ~* \.(js|css|jpe?g|png|gif|ico|swf)$ {
-  if ($request_uri ~ "\?[0-9]+$") {
-    expires max; # cache timestamped assets forever...
-    break;
-  }
-  if ($request_uri !~ "\?[0-9]+$") {
-    expires 1d; # ...and others for 1 day
-    break;
-  }
+location ~* \.(js|css|jpe?g|png|gif|ico|swf)(\?[0-9]+)$ {
+  expires max; # cache timestamped assets forever...
+  break;
 }
