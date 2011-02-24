@@ -93,6 +93,14 @@ describe Moonshine::Manifest::Rails do
         /rubygems.org/
       )
     end
+    
+    it "should be valid gemrc syntax (i.e. no leading symbols)" do
+      @manifest.rails_gems
+
+      @manifest.should have_file('/etc/gemrc').with_content(
+        /^gem:/
+      )
+    end
 
     it "loads gems from config" do
       @manifest.configure(:gems => [ { :name => 'jnewland-pulse', :source => 'http://rubygems.org' } ])
@@ -167,7 +175,7 @@ describe Moonshine::Manifest::Rails do
         /PassengerUseGlobalQueue On/
       )
       @manifest.should exec_command('/usr/sbin/a2enmod passenger')
-      @manifest.should exec_command('/usr/bin/ruby -S rake clean apache2')
+      @manifest.should exec_command('sudo /usr/bin/ruby -S rake clean apache2')
     end
 
     it "allows setting booleans configurations to false" do
@@ -188,7 +196,7 @@ describe Moonshine::Manifest::Rails do
 
         vhost_conf_path = "/etc/apache2/sites-available/#{@manifest.configuration[:application]}"
         @manifest.should have_file(vhost_conf_path).with_content(
-          /RailsAllowModRewrite On/
+          /RailsAllowModRewrite is deprecated/
         )
 
         @manifest.should exec_command('/usr/sbin/a2dissite 000-default')
@@ -218,6 +226,18 @@ describe Moonshine::Manifest::Rails do
 
         @manifest.should have_file("/etc/apache2/sites-available/#{@manifest.configuration[:application]}").with_content(
           /AddOutputFilterByType DEFLATE text\/css application\/javascript/
+        )
+      end
+
+      it "supports configuring FileETag" do
+        @manifest.passenger_configure_gem_path
+        @manifest.configure(:apache => { :file_etag => "MTime Size" })
+        
+        @manifest.passenger_site
+
+        vhost_conf_path = "/etc/apache2/sites-available/#{@manifest.configuration[:application]}"
+        @manifest.should have_file(vhost_conf_path).with_content(
+          /FileETag MTime Size/
         )
       end
 
@@ -437,6 +457,50 @@ describe Moonshine::Manifest::Rails do
 
     @manifest.should exec_command('/usr/bin/psql -c "CREATE USER pg_username WITH PASSWORD \'pg_password\'"')
     @manifest.should exec_command('/usr/bin/createdb -O pg_username pg_database')
+  end
+
+  describe "#gem" do
+    before do
+      @manifest.gem 'rmagick'
+    end
+    it "uses gem provider for package" do
+      @manifest.should have_package('rmagick').from_provider('gem')
+    end
+
+    it "runs before rails_gem" do
+      package = @manifest.packages['rmagick']
+      package.before.type.should == 'Exec'
+      package.before.title.should == 'rails_gems'
+    end
+
+    it "requires /etc/gemrc" do
+      package = @manifest.packages['rmagick']
+
+      gemrc = package.require.detect do |require|
+        require.title == '/etc/gemrc'
+      end
+
+      gemrc.should_not == nil
+      gemrc.type.should == 'File'
+    end
+
+    it "requires native packages" do
+      package = @manifest.packages['rmagick']
+
+      imagemagick = package.require.detect do |require|
+        require.title == 'imagemagick'
+      end
+
+      imagemagick.should_not == nil
+      imagemagick.type.should == 'Package'
+
+      libmagick9_dev = package.require.detect do |require|
+        require.title == 'libmagick9-dev'
+      end
+
+      libmagick9_dev.should_not == nil
+      libmagick9_dev.type.should == 'Package'
+    end
   end
 
 end

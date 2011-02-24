@@ -60,12 +60,12 @@ class Moonshine::Manifest::Rails < Moonshine::Manifest
 
   def db_server
     case database_environment[:adapter]
-    when 'mysql'
+    when 'mysql', 'mysql2'
       recipe :mysql_server, :mysql_gem, :mysql_database, :mysql_user, :mysql_fixup_debian_start
     when 'postgresql'
       recipe :postgresql_server, :postgresql_gem, :postgresql_user, :postgresql_database
-    when 'sqlite' || 'sqlite3'
-      self.class.recipe :sqlite3
+    when 'sqlite', 'sqlite3'
+      recipe :sqlite3
     end
   end
 
@@ -74,7 +74,7 @@ class Moonshine::Manifest::Rails < Moonshine::Manifest
   end
 
   def utilities
-    recipe :ntp, :time_zone, :postfix, :cron_packages, :motd, :security_updates
+    recipe :ntp, :time_zone, :postfix, :cron_packages, :motd, :security_updates, :apt_sources
   end
 
   def rails_template_dir
