@@ -42,6 +42,8 @@ Do not hesitate to improve my work. Any sensible pull request is much appreciate
  local:~$ scp ~/.ssh/id_rsa.pub rails@server:/home/rails/my_key.pub
  local:~$ ssh rails@server
 
+- And add your public key to the +authorized_keys+ file on the server
+
  server:~$ mkdir /home/rails/.ssh
  server:~$ tee -a my_key.pub /home/rails/.ssh/authorized_keys
  server:~$ sudo chown -R rails:rails /home/rails/.ssh
@@ -57,12 +59,12 @@ Do not hesitate to improve my work. Any sensible pull request is much appreciate
 
  local:~$ rails generate moonshine
 
-- Edit the +config/moonshine.yml+ file, especially the +application+, +deploy_to+ and +repository+ keys.
+- Edit the +moonshine.yml+ file, especially the +application+, +deploy_to+ and +repository+ keys.
 - Next, capify your Rails app
 
  local:~$ capify .
 
-- Edit the +config/deploy.rb+ file to reflect your server's IP address or hostname.
+- Edit the +deploy.rb+ file to reflect your server's IP address or hostname.
 - Push your changes to your app's repo (the location where Moonshine will be pulling from)
 - Now you're ready to prepare your server for your app. This command takes a while, {here are some kittens}[http://images.google.com/images?hl=en&source=imghp&biw=1440&bih=803&q=kittens&gbv=2&aq=f&aqi=g10&aql=&oq=]
  local:~$ cap deploy:setup
