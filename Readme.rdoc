@@ -8,13 +8,68 @@ To get started, check out our {tutorial}[https://github.com/railsmachine/moonshi
 
 Once you're a bit more comfortable with Moonshine, you'll find our documentation on {the wiki}[https://github.com/railsmachine/moonshine/wiki] to be helpful!
 
+== About this fork
+
+This fork makes Moonshine use Nginx as default server for your Rails app. Additionally, it tweaks some MySQL and Passenger settings to get more sensible defaults on a Rails 3 app. Please follow
+the instructions in the Installation section below for help on setting up your server.
+Please note that this fork is aimed at Ubuntu 10.10 Server Edition.
+
+My fork is based on the work of {titanous}[https://github.com/titanous/moonshine], he made the Nginx stuff possible.
+
+Do not hesitate to improve my work. Any sensible pull request is much appreciated.
+
 == Requirements
 
-* A server running Ubuntu 8.10 or 10.04 LTS (Want to see your favorite platform supported?  Fork Moonshine on GitHub!)
-* A Rails 2.3 or Rails 3 app
+* A server running Ubuntu 10.10 Server Edition
+* A Rails 3 app
 * A user on this server that can:
   * Execute commands via sudo
   * Access your application's source code repository
+
+== Installation
+
+- Download and install the {Ubuntu 10.10 Server Edition}[http://www.ubuntu.com/server/get-ubuntu/download] image on your server.
+- Create a +rails+ user. This is what Moonshine will use for it's operations. 
+
+ server:~$ sudo adduser rails
+
+- Give the +rails+ user sudo permisions
+
+ server:~$ sudo visudo # add "rails ALL = NOPASSWD: ALL" below the "root ALL=(ALL) ALL" line
+
+- Copy (via SCP) and install your local public key on the server
+
+ local:~$ scp ~/.ssh/id_rsa.pub rails@server:/home/rails/my_key.pub
+ local:~$ ssh rails@server
+
+ server:~$ mkdir /home/rails/.ssh
+ server:~$ tee -a my_key.pub /home/rails/.ssh/authorized_keys
+ server:~$ sudo chown -R rails:rails /home/rails/.ssh
+ server:~$ sudo chmod 700 /home/rails/.ssh
+ server:~$ sudo chmod 600 /home/rails/.ssh/authorized_keys
+
+- Make sure your server has access to your git repository (e.g. Github) via its public key.
+- Now add this Moonshine fork to your Rails 3 app as a plugin
+
+ local:~$ rails plugin install git://github.com/marceldegraaf/moonshine.git
+
+- And generate the configuration files and manifest
+
+ local:~$ rails generate moonshine
+
+- Edit the +config/moonshine.yml+ file, especially the +application+, +deploy_to+ and +repository+ keys.
+- Next, capify your Rails app
+
+ local:~$ capify .
+
+- Edit the +config/deploy.rb+ file to reflect your server's IP address or hostname.
+- Push your changes to your app's repo (the location where Moonshine will be pulling from)
+- Now you're ready to prepare your server for your app. This command takes a while, {here are some kittens}[http://images.google.com/images?hl=en&source=imghp&biw=1440&bih=803&q=kittens&gbv=2&aq=f&aqi=g10&aql=&oq=]
+ local:~$ cap deploy:setup
+- When the server is set up, deploy your app
+ local:~$ cap deploy
+
+For more info or help, see the {official Moonshine tutorial}[https://github.com/railsmachine/moonshine/wiki/Tutorial].
 
 == Running Tests
 

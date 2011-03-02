@@ -17,10 +17,10 @@ class <%= klass_name %> < Moonshine::Manifest::Rails
   #   :custom => { :random => random  }
   # })
 
-  # The default_stack recipe install Rails, Apache, Passenger, the database from
+  # The nginx_stack recipe install Rails, Nginx, Passenger, the database from
   # database.yml, Postfix, Cron, logrotate and NTP. See lib/moonshine/manifest/rails.rb
   # for details. To customize, remove this recipe and specify the components you want.
-  recipe :default_stack
+  recipe :nginx_stack
 
   # Add your application's custom requirements here
   def application_packages

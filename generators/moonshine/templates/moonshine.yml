@@ -43,8 +43,8 @@
 
 # Use :shared_config to copy directories straight from your local project
 # directory to the server: these are files that you don't have/want in scm.
-#:shared_config:
-#  - config/database.yml
+:shared_config:
+  - config/database.yml
 
 # The entries in shared_children are created in #{application}/shared
 :shared_children:
@@ -57,10 +57,9 @@
 # defaults, but this allows you to add to them. Please file an issue at
 # http://github.com/railsmachine/moonshine/issues if there are additional gem
 # dependencies Moonshine should know about.
-#:apt_gems:
-#  :awesomegem:
-#    - awesome
-#    - libawesome-dev
+:apt_gems:
+  :mysql2:
+    - libmysqlclient-dev
 
 # Passenger-specific options. Refer to the following templates for details
 # about what values are used:
@@ -68,9 +67,11 @@
 # - vendor/plugins/moonshine/lib/moonshine/manifest/rails/templates/passenger.vhost.erb 
 :passenger:
   :max_pool_size: 3
+  :pre_start: true
 
 # MySQL-specific options. Refer to the following templates for details about
 # what values are used:
 # - vendor/plugins/moonshine/lib/moonshine/manifest/rails/templates/moonshine.cnf.erb 
 :mysql:
+  :binlog_format: mixed
   :innodb_buffer_pool_size: 128M

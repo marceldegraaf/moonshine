@@ -11,3 +11,4 @@ spec/generator.log
 .bundle
 .DS_Store
 tmp
+.yardoc
