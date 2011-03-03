@@ -4,9 +4,9 @@ Moonshine is Rails deployment and configuration management done right.
 
 By leveraging capistrano and puppet, moonshine allows you have a working application server in 15 minutes, and be able to sanely manage it's configuration from the comfort of your version control of choice.
 
-To get started, check out our {tutorial}[https://github.com/railsmachine/moonshine/wiki/Tutorial]. It covers configuring and deploying your application for the first time with Moonshine.
+To get started, check out the "Setting up a server" section below.
 
-Once you're a bit more comfortable with Moonshine, you'll find our documentation on {the wiki}[https://github.com/railsmachine/moonshine/wiki] to be helpful!
+Once you're a bit more comfortable with Moonshine, you'll find the official documentation on {the wiki}[https://github.com/railsmachine/moonshine/wiki] to be helpful!
 
 == About this fork
 
