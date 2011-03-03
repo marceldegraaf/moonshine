@@ -78,7 +78,12 @@ Do not hesitate to improve my work. Any sensible pull request is much appreciate
 - Now you're ready to prepare your server for your app. This command takes a while, {here are some kittens}[http://images.google.com/images?hl=en&source=imghp&biw=1440&bih=803&q=kittens&gbv=2&aq=f&aqi=g10&aql=&oq=]
  local:~$ cap deploy:setup
 - When the server is set up, deploy your app
+
  local:~$ cap deploy
+
+- After deploying for the first time, you should manually start the Nginx server
+
+ server:~$ sudo /etc/init.d/nginx start
 
 For more info or help, see the {official Moonshine tutorial}[https://github.com/railsmachine/moonshine/wiki/Tutorial].
 
