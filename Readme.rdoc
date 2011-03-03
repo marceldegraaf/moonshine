@@ -21,12 +21,10 @@ Do not hesitate to improve my work. Any sensible pull request is much appreciate
 == Requirements
 
 * A server running Ubuntu 10.10 Server Edition
-* A Rails 3 app
-* A user on this server that can:
-  * Execute commands via sudo
-  * Access your application's source code repository
+* A Rails 3 app running on Ruby 1.8.7 Enterprise Edition
+* A user on this server that can execute commands via sudo
 
-== Installation
+== Setting up a server
 
 - Download and install the {Ubuntu 10.10 Server Edition}[http://www.ubuntu.com/server/get-ubuntu/download] image on your server.
 - Install the SSH server
