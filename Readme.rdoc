@@ -29,28 +29,37 @@ Do not hesitate to improve my work. Any sensible pull request is much appreciate
 == Installation
 
 - Download and install the {Ubuntu 10.10 Server Edition}[http://www.ubuntu.com/server/get-ubuntu/download] image on your server.
-- Create a +rails+ user. This is what Moonshine will use for it's operations. 
+- Install the SSH server
+
+ server:~$ sudo apt-get install ssh
+
+- Create a +rails+ user. This is what Moonshine will use for it's operations. Make sure you use the +adduser+ command and NOT the +useradd+ command.
 
  server:~$ sudo adduser rails
+
+- Set a password for the rails user
+
+ server:~$ sudo passwd rails
 
 - Give the +rails+ user sudo permisions
 
  server:~$ sudo visudo # add "rails ALL = NOPASSWD: ALL" below the "root ALL=(ALL) ALL" line
 
+- Add the rails user to the +sudo+ group
+
+ server:~$ sudo usermod -a -G sudo rails
+
 - Copy (via SCP) and install your local public key on the server
 
- local:~$ scp ~/.ssh/id_rsa.pub rails@server:/home/rails/my_key.pub
+ local:~$ scp ~/.ssh/id_rsa.pub rails@server:my_key.pub
  local:~$ ssh rails@server
 
 - And add your public key to the +authorized_keys+ file on the server
 
  server:~$ mkdir /home/rails/.ssh
- server:~$ tee -a my_key.pub /home/rails/.ssh/authorized_keys
- server:~$ sudo chown -R rails:rails /home/rails/.ssh
- server:~$ sudo chmod 700 /home/rails/.ssh
- server:~$ sudo chmod 600 /home/rails/.ssh/authorized_keys
+ server:~$ cat my_key.pub > /home/rails/.ssh/authorized_keys
 
-- Make sure your server has access to your git repository (e.g. Github) via its public key.
+- Make sure your server's +rails+ user has access to your git repository (e.g. Github) via its public key.
 - Now add this Moonshine fork to your Rails 3 app as a plugin
 
  local:~$ rails plugin install git://github.com/marceldegraaf/moonshine.git
