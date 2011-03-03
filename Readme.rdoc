@@ -43,7 +43,7 @@ Do not hesitate to improve my work. Any sensible pull request is much appreciate
 
 - Give the +rails+ user sudo permisions
 
- server:~$ sudo visudo # add "rails ALL = NOPASSWD: ALL" below the "root ALL=(ALL) ALL" line
+ server:~$ sudo visudo # add "rails ALL=(ALL) NOPASSWD:ALL" below the "root ALL=(ALL) ALL" line
 
 - Add the rails user to the +sudo+ group
 
